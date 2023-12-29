@@ -1,5 +1,6 @@
 import os
 import subprocess
+import shlex
 from flask import Flask
 
 # Function to start the web server
@@ -15,11 +16,12 @@ def start_server(port):
 # Set default port to 8080 or use SERVER_PORT or PORT environment variable
 port = int(os.environ.get('SERVER_PORT', os.environ.get('PORT', 8080)))
 
-# Start the web server in a separate process
-subprocess.Popen(['python', __file__, '--start-server', str(port)])
-
-# Continue with the rest of your script...
-
-# For example, your original code to run the "start.sh" script
+# Define the command to be executed
 cmd = "chmod +x ./start.sh && ./start.sh"
-subprocess.call(cmd, shell=True)
+
+# Start the web server in a separate process group
+web_server_command = ['python', __file__, '--start-server', str(port)]
+subprocess.Popen(web_server_command, preexec_fn=os.setsid)
+
+# Start the web server
+start_server(port)
