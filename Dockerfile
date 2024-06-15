@@ -4,6 +4,13 @@ FROM python:3.11-slim
 # 设置工作目录
 WORKDIR /app
 
+# 更新包列表并安装 bash, curl, zsh
+RUN apt-get update && apt-get install -y \
+    bash \
+    curl \
+    zsh \
+    && rm -rf /var/lib/apt/lists/*
+
 # 复制 requirements.txt 并安装依赖
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
