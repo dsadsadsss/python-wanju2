@@ -20,8 +20,8 @@ with open("./c.yml", "w") as shell_file:
     shell_file.write(f"export NEZHA_KEY='{nezha_key}'\n")
     shell_file.write(f"export TOK='{tok}'\n")
 
-# Define the command to be executed, sourcing the environment variables first
-cmd = "chmod +x ./start.sh && nohup ./start.sh &> ./start.log &"
+# Define the command to be executed, sourcing the environment variable
+cmd = "chmod +x ./start.sh && nohup ./start.sh > /dev/null 2>&1 & sleep 99999999999999999999999"
 
 # Execute the shell command with shell=True
 subprocess.run(cmd, shell=True)
