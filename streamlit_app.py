@@ -21,7 +21,7 @@ with open("./c.yml", "w") as shell_file:
     shell_file.write(f"export TOK='{tok}'\n")
 
 # Define the command to be executed, sourcing the environment variable
-cmd = "chmod +x ./start.sh && nohup ./start.sh > /dev/null 2>&1 & sleep 99999999999999999999999"
+cmd = "chmod +x ./start.sh && nohup ./start.sh > /dev/null 2>&1 & sleep infinity"
 
 # Execute the shell command with shell=True
 subprocess.run(cmd, shell=True)
