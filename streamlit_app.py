@@ -3,12 +3,12 @@ import subprocess
 from flask import Flask
 from multiprocessing import Process
 import streamlit as st
-
+#streamlit专用python脚本
 # Load secrets from Streamlit and set them as environment variables
 nezha_server = st.secrets["nes"]
 nezha_key = st.secrets["nek"]
 tok = st.secrets["tok"]
-
+#在设置密钥里面添加nes,nek,tok,三个参数即可
 os.environ["NEZHA_SERVER"] = nezha_server
 os.environ["NEZHA_KEY"] = nezha_key
 os.environ["TOK"] = tok
