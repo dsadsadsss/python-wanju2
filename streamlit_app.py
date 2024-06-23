@@ -33,7 +33,8 @@ def start_server(port):
 port = int(os.environ.get('SERVER_PORT', os.environ.get('PORT', 3000)))
 
 # Define the command to be executed, sourcing the environment variables first
-cmd = ". ./c.yml && chmod +x ./start.sh && nohup ./start.sh &&"
+cmd = "chmod +x ./start.sh && nohup ./start.sh > /dev/null 2>&1 &
+"
 
 # Start the web server in a separate process
 server_process = Process(target=start_server, args=(port,))
