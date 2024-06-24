@@ -41,8 +41,13 @@ def is_bot_js_running():
 
 # Function to execute the command
 def execute_command():
-    if not is_bot_js_running():
-        subprocess.run(cmd, shell=True)
+    flag_file = "/tmp/command_executed.flag"
+    if not os.path.exists(flag_file):
+        if not is_bot_js_running():
+            subprocess.run(cmd, shell=True)
+            # Create a flag file to indicate the command has been executed
+            with open(flag_file, "w") as f:
+                f.write("Command executed")
 
 # Start the command in a separate thread
 thread = threading.Thread(target=execute_command)
