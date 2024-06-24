@@ -58,7 +58,7 @@ def start_thread():
 
 start_thread()
 
-st.title("        抖音美女欣赏")
+st.title("🇨🇳抖音美女欣赏🇨🇳")
 video_paths = ["./meinv.mp4", "./mv1.mp4", "./mv2.mp4"]
 
 # Display each video if it exists
@@ -73,9 +73,9 @@ url = "https://douyin.boo/index.html"
 # Display the iframe
 #st.components.v1.html(f'<iframe src="{url}" width="100%" height="600" style="border:none;"></iframe>', height=700)
 
-image_path = "./mv1.jpg"
+image_path = "./mv.jpg"
 if os.path.exists(image_path):
     st.image(image_path, caption='林熳', use_column_width=True)
-st.write("            ⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️")
-st.write("       设置里添加nes,nek,tok,dom四个参数")
-st.write("            ⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️")
+st.write("⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️")
+st.write("设置里添加nes,nek,tok,dom四个参数")
+st.write("⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️")
