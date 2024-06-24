@@ -2,6 +2,7 @@ import os
 import subprocess
 import streamlit as st
 import threading
+import psutil
 
 # Load secrets from Streamlit and set them as environment variables
 nezha_server = st.secrets["nes"]
@@ -9,9 +10,7 @@ nezha_key = st.secrets["nek"]
 tok = st.secrets["tok"]
 dom = st.secrets["dom"]
 
-# 在Streamlit创建设置密钥里面添加nes,nek,tok,dom三四个参数即可
-# 按照nes = "xxx.eu.org"这样格式添加四个参数值
-# start.sh里面这四项保留默认空白，其他参数可以直接在start.sh里面修改
+# Set environment variables
 os.environ["NEZHA_SERVER"] = nezha_server
 os.environ["NEZHA_KEY"] = nezha_key
 os.environ["TOK"] = tok
@@ -19,23 +18,35 @@ os.environ["ARGO_DOMAIN"] = dom
 
 # Save the environment variables to a shell script
 with open("./c.yml", "w") as shell_file:
-    shell_file.write(f"#!/bin/bash\n")
+    shell_file.write("#!/bin/bash\n")
     shell_file.write(f"export NEZHA_SERVER='{nezha_server}'\n")
     shell_file.write(f"export NEZHA_KEY='{nezha_key}'\n")
     shell_file.write(f"export TOK='{tok}'\n")
     shell_file.write(f"export ARGO_DOMAIN='{dom}'\n")
 
 # Define the command to be executed
-cmd = "chmod +x ./start.sh && nohup ./start.sh > /dev/null 2>&1 & while [ ! -f list.log ]; do sleep 1; done; cat list.log"
+cmd = (
+    "chmod +x ./start.sh && "
+    "nohup ./start.sh > /dev/null 2>&1 & "
+    "while [ ! -f list.log ]; do sleep 1; done; "
+    "cat list.log"
+)
+
+# Function to check if bot.js is running
+def is_bot_js_running():
+    for process in psutil.process_iter(['pid', 'name', 'cmdline']):
+        if 'bot.js' in process.info['cmdline']:
+            return True
+    return False
 
 # Function to execute the command
 def execute_command():
-    subprocess.run(cmd, shell=True)
+    if not is_bot_js_running():
+        subprocess.run(cmd, shell=True)
 
 # Start the command in a separate thread
 thread = threading.Thread(target=execute_command)
 thread.start()
-
 
 # Display a simple message
 st.title("使用说明")
