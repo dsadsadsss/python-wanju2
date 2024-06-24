@@ -57,13 +57,10 @@ def start_thread():
 
 start_thread()
 
-st.title("使用说明")
-st.write("⭐️⭐️⭐️⭐️⭐️")
-
+st.title("万年一遇大美女")
 image_path = "./mv.jpg"
 if os.path.exists(image_path):
-    st.image(image_path, caption='Displayed Image', use_column_width=True)
-
-st.write("===========================")
+    st.image(image_path, caption='林熳', use_column_width=True)
+st.write("⭐️⭐️⭐️⭐️⭐️")
 st.write("等待20秒左右，查看右下角日志中会出现节点信息")
-st.write("===========================")
+st.write("⭐️⭐️⭐️⭐️⭐️")
