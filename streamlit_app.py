@@ -56,13 +56,14 @@ def start_thread():
         thread.start()
 
 start_thread()
-# Display the image
+
+st.title("使用说明")
+
+
 image_path = "./mv.jpg"
 if os.path.exists(image_path):
     st.image(image_path, caption='Displayed Image', use_column_width=True)
 
-# Display a simple message
-st.title("使用说明")
 st.write("⭐️⭐️⭐️⭐️⭐️")
 st.write("===========================")
 st.write("等待20秒左右，查看右下角日志中会出现节点信息")
