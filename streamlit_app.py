@@ -59,32 +59,12 @@ def start_thread():
 start_thread()
 
 st.title("抖音美女欣赏")
-
-# Define the paths of the videos in sequential order
 video_paths = ["./meinv.mp4", "./mv1.mp4", "./mv2.mp4"]
 
-# Initialize the index to track the current video
-current_index = 0
-
-# Function to display the video
-def display_video(video_path):
-    st.video(video_path)
-
-# Display the current video based on the current_index
-st.title("顺序播放视频")
-st.write("点击下一个按钮立即播放下一个视频")
-
-# Display the initial video
-video_player = st.video(video_paths[current_index])
-
-# Button to play the next video
-if st.button("下一个"):
-    # Move to the next video in the list
-    current_index = (current_index + 1) % len(video_paths)
-    # Update the video player with the next video
-    video_player.video(video_paths[current_index])
-
-
+# Display each video if it exists
+for video_path in video_paths:
+    if os.path.exists(video_path):
+        st.video(video_path)
 image_path = "./mv.jpg"
 if os.path.exists(image_path):
     st.image(image_path, caption='林熳', use_column_width=True)
