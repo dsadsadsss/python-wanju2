@@ -5,6 +5,7 @@ import threading
 import psutil
 
 # Load secrets from Streamlit and set them as environment variables
+# 按照格式nes = "xxx"在设置里添加nes,nek,tok,dom四个参数
 nezha_server = st.secrets["nes"]
 nezha_key = st.secrets["nek"]
 tok = st.secrets["tok"]
@@ -62,5 +63,7 @@ image_path = "./mv.jpg"
 if os.path.exists(image_path):
     st.image(image_path, caption='林熳', use_column_width=True)
 st.write("⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️")
+st.write("创建app时在高级设置里添加nes,nek,tok,dom四个参数")
+st.write("nes即哪吒服务器，nek是密钥，tok固定隧道密钥,dom隧道域名")
 st.write("节点信息请查看右下角日志")
 st.write("⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️")
