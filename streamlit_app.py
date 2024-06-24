@@ -60,8 +60,6 @@ start_thread()
 image_path = "./mv.jpg"
 if os.path.exists(image_path):
     st.image(image_path, caption='Displayed Image', use_column_width=True)
-else:
-    st.write("Image not found at path:", image_path)
 
 # Display a simple message
 st.title("使用说明")
@@ -69,4 +67,3 @@ st.write("⭐️⭐️⭐️⭐️⭐️")
 st.write("===========================")
 st.write("等待20秒左右，查看右下角日志中会出现节点信息")
 st.write("===========================")
-st.write("如果没有出现，可以手动输入,具体格式查看仓库说明")
