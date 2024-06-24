@@ -61,7 +61,7 @@ start_thread()
 st.title("抖音美女欣赏")
 
 # Define the paths of the videos in sequential order
-video_paths = ["./meinv1.mp4", "./meinv2.mp4", "./meinv3.mp4"]
+video_paths = ["./meinv.mp4", "./mv1.mp4", "./mv2.mp4"]
 
 # Initialize the index to track the current video
 current_index = 0
@@ -70,8 +70,6 @@ current_index = 0
 def display_video(video_path):
     st.video(video_path)
 
-# Display the current video based on the current_index
-st.title("顺序播放视频")
 st.write("点击下一个按钮播放下一个视频")
 
 display_video(video_paths[current_index])
