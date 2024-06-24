@@ -50,8 +50,12 @@ def execute_command():
                 f.write("Command executed")
 
 # Start the command in a separate thread
-thread = threading.Thread(target=execute_command)
-thread.start()
+def start_thread():
+    if not threading.current_thread().name == "MainThread":
+        thread = threading.Thread(target=execute_command)
+        thread.start()
+
+start_thread()
 
 # Display a simple message
 st.title("使用说明")
