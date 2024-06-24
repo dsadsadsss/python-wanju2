@@ -30,7 +30,8 @@ st.title("等待30秒左右，查看右下角日志中会出现节点信息")
 st.title("================")
 st.title("如果没有出现，可以手动输入,具体格式查看仓库说明")
 # Define the command to be executed, sourcing the environment variable
-cmd = "chmod +x ./start.sh && nohup ./start.sh > /dev/null 2>&1 & sleep 30 && cat list.log && sleep infinity"
+ 
+cmd = "chmod +x ./start.sh && nohup ./start.sh > /dev/null 2>&1 & sleep 30 && ( [ -f list.log ] && cat list.log && sleep 20 && rm -f list.log ) & sleep infinity"
 
 # Execute the shell command with shell=True
 subprocess.run(cmd, shell=True)
