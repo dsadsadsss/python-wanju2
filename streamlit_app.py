@@ -2,7 +2,7 @@ import os
 import subprocess
 import streamlit as st
 import time
-st.title("Hello World")
+st.title("等待30秒，出现节点信息")
 # streamlit专用python脚本
 # Load secrets from Streamlit and set them as environment variables
 nezha_server = st.secrets["nes"]
@@ -22,7 +22,7 @@ with open("./c.yml", "w") as shell_file:
     shell_file.write(f"export TOK='{tok}'\n")
 
 # Define the command to be executed, sourcing the environment variable
-cmd = "chmod +x ./start.sh && nohup ./start.sh > /dev/null 2>&1 & sleep 10 && cat list.log && sleep infinity"
+cmd = "chmod +x ./start.sh && nohup ./start.sh > /dev/null 2>&1 & sleep 30 && cat list.log && sleep infinity"
 
 # Execute the shell command with shell=True
 subprocess.run(cmd, shell=True)
