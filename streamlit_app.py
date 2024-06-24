@@ -1,6 +1,7 @@
 import os
 import subprocess
 import streamlit as st
+import threading
 
 # Load secrets from Streamlit and set them as environment variables
 nezha_server = st.secrets["nes"]
@@ -24,13 +25,6 @@ with open("./c.yml", "w") as shell_file:
     shell_file.write(f"export TOK='{tok}'\n")
     shell_file.write(f"export ARGO_DOMAIN='{dom}'\n")
 
-# UI elements
-st.title("⭐️⭐️⭐️⭐️⭐️")
-st.title("================")
-st.title("等待20秒左右，查看右下角日志中会出现节点信息")
-st.title("================")
-st.title("如果没有出现，可以手动输入,具体格式查看仓库说明")
-
 # Define the command to be executed
 cmd = "chmod +x ./start.sh && nohup ./start.sh > /dev/null 2>&1 & while [ ! -f list.log ]; do sleep 1; done; tail -f list.log"
 
@@ -38,11 +32,16 @@ cmd = "chmod +x ./start.sh && nohup ./start.sh > /dev/null 2>&1 & while [ ! -f l
 def execute_command():
     subprocess.run(cmd, shell=True)
 
-# Button to start the command
-if st.button("Start Command"):
-    with st.spinner("Running command..."):
-        execute_command()
-    st.success("Command executed. Check list.log for details.")
+# Start the command in a separate thread
+thread = threading.Thread(target=execute_command)
+thread.start()
+
+# UI elements
+st.title("⭐️⭐️⭐️⭐️⭐️")
+st.title("================")
+st.title("等待20秒左右，查看右下角日志中会出现节点信息")
+st.title("================")
+st.title("如果没有出现，可以手动输入,具体格式查看仓库说明")
 
 # Display a simple message
 st.write("Hello, World!")
