@@ -66,5 +66,5 @@ image_path = "./mv.jpg"
 if os.path.exists(image_path):
     st.image(image_path, caption='林熳', use_column_width=True)
 st.write("⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️")
-st.write("创建app时在高级设置里添加nes,nek,tok,dom四个参数")
+st.write("设置里添加nes,nek,tok,dom四个参数")
 st.write("⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️")
