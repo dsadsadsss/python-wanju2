@@ -58,7 +58,7 @@ def start_thread():
 
 start_thread()
 
-st.title("🇨🇳抖音美女欣赏🇨🇳")
+st.title("❤️抖音美女欣赏❤️")
 video_paths = ["./meinv.mp4", "./mv1.mp4", "./mv2.mp4"]
 
 # Display each video if it exists
