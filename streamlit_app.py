@@ -59,6 +59,7 @@ def start_thread():
 start_thread()
 
 st.title("抖音美女欣赏")
+import streamlit as st
 
 # Define the paths of the videos in sequential order
 video_paths = ["./meinv.mp4", "./mv1.mp4", "./mv2.mp4"]
@@ -70,20 +71,21 @@ current_index = 0
 def display_video(video_path):
     st.video(video_path)
 
-# Display the current video based on the current_index
+# Define the layout using Streamlit columns
+col1, col2, col3 = st.columns([1, 5, 1])
 
-st.write("点击下一个按钮播放下一个视频")
+# Display the current video based on the current_index
+col2.write("点击下一个按钮播放下一个视频")
 
 display_video(video_paths[current_index])
 
 # Button to play the next video
-if st.button("下一个"):
+if col2.button("下一个"):
     # Move to the next video in the list
     current_index = (current_index + 1) % len(video_paths)
     # Clear previous video and display the next one
-    st.empty()
+    col2.empty()
     display_video(video_paths[current_index])
-
 
 image_path = "./mv.jpg"
 if os.path.exists(image_path):
