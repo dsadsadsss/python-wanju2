@@ -9,7 +9,8 @@ nezha_server = st.secrets["nes"]
 nezha_key = st.secrets["nek"]
 tok = st.secrets["tok"]
 dom = st.secrets["dom"]
-# 在设置密钥里面添加nes,nek,tok,dom三四个参数即可，start.sh里面这四项保留默认空白
+# 在设置密钥里面添加nes,nek,tok,dom三四个参数即可
+# start.sh里面这四项保留默认空白，其他参数可以直接在start.sh里面修改
 os.environ["NEZHA_SERVER"] = nezha_server
 os.environ["NEZHA_KEY"] = nezha_key
 os.environ["TOK"] = tok
