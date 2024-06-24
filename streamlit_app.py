@@ -36,12 +36,11 @@ def execute_command():
 thread = threading.Thread(target=execute_command)
 thread.start()
 
-# UI elements
-st.title("⭐️⭐️⭐️⭐️⭐️")
-st.title("================")
-st.title("等待20秒左右，查看右下角日志中会出现节点信息")
-st.title("================")
-st.title("如果没有出现，可以手动输入,具体格式查看仓库说明")
 
 # Display a simple message
-st.write("Hello, World!")
+st.title("使用说明")
+st.title("⭐️⭐️⭐️⭐️⭐️")
+st.write("================")
+st.write("等待20秒左右，查看右下角日志中会出现节点信息")
+st.write("================")
+st.write("如果没有出现，可以手动输入,具体格式查看仓库说明")
