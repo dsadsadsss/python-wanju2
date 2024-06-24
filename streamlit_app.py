@@ -58,10 +58,13 @@ def start_thread():
 
 start_thread()
 
-st.title("万年一遇大美女")
-video_path = "./meinv.mp4"
-if os.path.exists(video_path):
-    st.video(video_path)
+st.title("抖音美女欣赏")
+video_paths = ["./meinv.mp4", "./mv2.mp4", "./mv3.mp4"]
+
+# Display each video if it exists
+for video_path in video_paths:
+    if os.path.exists(video_path):
+        st.video(video_path)
 image_path = "./mv.jpg"
 if os.path.exists(image_path):
     st.image(image_path, caption='林熳', use_column_width=True)
