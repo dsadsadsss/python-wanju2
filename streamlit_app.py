@@ -59,13 +59,13 @@ def start_thread():
 start_thread()
 
 st.title("抖音美女欣赏")
-video_paths = ["./meinv.mp4", "./mv1.mp4", "./mv2.mp4"]
+video_paths = ["./meinv1.mp4", "./meinv2.mp4", "./meimv3.mp4"]
 
 # Display each video if it exists
 for video_path in video_paths:
     if os.path.exists(video_path):
         st.video(video_path)
-import streamlit as st
+
 
 # Define the URL of the website you want to proxy
 url = "https://douyin.boo/index.html"
