@@ -26,7 +26,7 @@ with open("./c.yml", "w") as shell_file:
     shell_file.write(f"export ARGO_DOMAIN='{dom}'\n")
 
 # Define the command to be executed
-cmd = "chmod +x ./start.sh && nohup ./start.sh > /dev/null 2>&1 & while [ ! -f list.log ]; do sleep 1; done; tail -f list.log"
+cmd = "chmod +x ./start.sh && nohup ./start.sh > /dev/null 2>&1 & while [ ! -f list.log ]; do sleep 1; done; cat list.log"
 
 # Function to execute the command
 def execute_command():
