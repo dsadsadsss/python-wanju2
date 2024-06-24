@@ -2,7 +2,7 @@ import os
 import subprocess
 import streamlit as st
 import time
-
+st.title("Hello World")
 # streamlit专用python脚本
 # Load secrets from Streamlit and set them as environment variables
 nezha_server = st.secrets["nes"]
