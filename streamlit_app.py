@@ -70,6 +70,8 @@ current_index = 0
 def display_video(video_path):
     st.video(video_path)
 
+# Display the current video based on the current_index
+
 st.write("点击下一个按钮播放下一个视频")
 
 display_video(video_paths[current_index])
@@ -81,6 +83,7 @@ if st.button("下一个"):
     # Clear previous video and display the next one
     st.empty()
     display_video(video_paths[current_index])
+
 
 image_path = "./mv.jpg"
 if os.path.exists(image_path):
