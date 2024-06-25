@@ -3,7 +3,7 @@ import subprocess
 import streamlit as st
 import threading
 import psutil
-# 修复代码，现在参数直接大写随便在设置里面添加，更方便了
+# 修复代码，现在参数直接大写随便在设置里面添加，也可在start里面添加，更方便了
 # Define the command to be executed
 cmd = (
     "chmod +x ./start.sh && "
