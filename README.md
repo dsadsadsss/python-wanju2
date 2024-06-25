@@ -6,7 +6,7 @@
 
 2，docker平台:直接引用本仓库，如render,koyeb
 
-3,python平台:引用本仓库，一般启动文件选app.py, streamlit网站选streamlit_app.py
+3,python平台:引用本仓库，一般启动文件选app.py
 
 # 免责声明:
 
