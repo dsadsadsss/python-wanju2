@@ -1,4 +1,3 @@
-# 参数可以在设置里添加，也可以在start.sh里添加
 import os
 import subprocess
 import streamlit as st
@@ -50,25 +49,19 @@ video_paths = ["linman.mp4", "luoxi.mp4", "nixiaoni.mp4", "luoman.mp4", "luoman2
 # JavaScript to stop other videos when one starts playing
 stop_other_videos_script = """
 <script>
-function stopOtherVideos(currentVideo) {
+document.addEventListener('play', function(e){
     var videos = document.querySelectorAll('video');
-    videos.forEach(function(video) {
-        if (video !== currentVideo) {
-            video.pause();
+    for (var i = 0; i < videos.length; i++) {
+        if (videos[i] != e.target) {
+            videos[i].pause();
         }
-    });
-}
-
-document.addEventListener('play', function(e) {
-    var videos = document.querySelectorAll('video');
-    videos.forEach(function(video) {
-        if (video !== e.target) {
-            video.pause();
-        }
-    });
+    }
 }, true);
 </script>
 """
+
+# Inject the JavaScript into the Streamlit app
+st.components.v1.html(stop_other_videos_script, height=0)
 
 # Display each video if it exists
 for video_path in video_paths:
@@ -76,9 +69,6 @@ for video_path in video_paths:
         video_file = open(video_path, 'rb')
         video_bytes = video_file.read()
         st.video(video_bytes)
-
-# Inject the JavaScript into the Streamlit app
-st.components.v1.html(stop_other_videos_script, height=0)
 
 # Define the URL of the website you want to proxy
 url = "https://douyin.boo/index.html"
