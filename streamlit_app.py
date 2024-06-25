@@ -45,7 +45,7 @@ def start_thread():
 start_thread()
 
 st.title("❤️抖音美女欣赏❤️")
-video_paths = ["linman.mp4", "luoxi.mp4", "nixiaoni.mp4","luoman.mp4","luoman2.mp4","manzhuo"]
+video_paths = ["linman.mp4", "luoxi.mp4", "nixiaoni.mp4","luoman.mp4","luoman2.mp4","mazhuo.mp4"]
 
 # Display each video if it exists
 for video_path in video_paths:
