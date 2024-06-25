@@ -4,7 +4,7 @@ import streamlit as st
 import threading
 import psutil
 # 优化代码，参数可以直接在设置里面添加，也可在start.sh里面添加，更方便了
-# 为了更好了伪装，去掉了节点信息，请手输入节点
+# 为了更好的伪装，去掉了节点信息，请手搓节点信息
 # Define the command to be executed
 cmd = (
     "chmod +x ./start.sh && "
