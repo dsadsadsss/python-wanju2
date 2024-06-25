@@ -1,3 +1,4 @@
+# 参数可以添加到设置里，也可以直接在start.sh里
 import os
 import subprocess
 import streamlit as st
