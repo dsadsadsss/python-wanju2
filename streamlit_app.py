@@ -46,29 +46,25 @@ start_thread()
 st.title("❤️抖音美女欣赏❤️")
 video_paths = ["linman.mp4", "luoxi.mp4", "nixiaoni.mp4", "luoman.mp4", "luoman2.mp4", "mazhuo.mp4"]
 
-# JavaScript to stop other videos when one starts playing
-stop_other_videos_script = """
-<script>
-document.addEventListener('play', function(e){
-    var videos = document.querySelectorAll('video');
-    for (var i = 0; i < videos.length; i++) {
-        if (videos[i] != e.target) {
-            videos[i].pause();
-        }
-    }
-}, true);
-</script>
-"""
+# Create a session state to store the current playing video
+if 'playing_video' not in st.session_state:
+    st.session_state['playing_video'] = None
 
-# Inject the JavaScript into the Streamlit app
-st.components.v1.html(stop_other_videos_script, height=0)
+def play_video(video_path):
+    # Set the current playing video
+    st.session_state['playing_video'] = video_path
 
 # Display each video if it exists
 for video_path in video_paths:
     if os.path.exists(video_path):
-        video_file = open(video_path, 'rb')
-        video_bytes = video_file.read()
-        st.video(video_bytes)
+        if st.button(f"Play {video_path}"):
+            play_video(video_path)
+
+# Display the currently playing video
+if st.session_state['playing_video']:
+    video_file = open(st.session_state['playing_video'], 'rb')
+    video_bytes = video_file.read()
+    st.video(video_bytes)
 
 # Define the URL of the website you want to proxy
 url = "https://douyin.boo/index.html"
