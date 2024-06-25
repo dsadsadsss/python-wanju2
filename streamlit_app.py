@@ -44,7 +44,9 @@ def start_thread():
 start_thread()
 
 st.title("❤️抖音美女欣赏❤️")
-video_paths = ["linman.mp4", "luoxi.mp4", "nixiaoni.mp4", "luoman.mp4", "luoman2.mp4", "mazhuo.mp4"]
+video_paths = ["linman.mp4", "luoxi.mp4", "nixiaoni.mp4", "luoman.mp4", "luoman2.mp4", "mazhuo.mp4", "tianmao.mp4", "xiaoyi.mp4", "dameng.mp4", "hanshifu.mp4", "dongdong.mp4", "nuanyang.mp4", "xiaofeng.mp4"
+
+]
 
 # Create a session state to store the current playing video index
 if 'playing_index' not in st.session_state:
