@@ -46,23 +46,22 @@ start_thread()
 st.title("❤️抖音美女欣赏❤️")
 video_paths = ["linman.mp4", "luoxi.mp4", "nixiaoni.mp4", "luoman.mp4", "luoman2.mp4", "mazhuo.mp4"]
 
-# Create a session state to store the current playing video
-if 'playing_video' not in st.session_state:
-    st.session_state['playing_video'] = None
+# Create a session state to store the current playing video index
+if 'playing_index' not in st.session_state:
+    st.session_state['playing_index'] = 0
 
-def play_video(video_path):
-    # Set the current playing video
-    st.session_state['playing_video'] = video_path
+# Function to play the next video
+def play_next_video():
+    st.session_state['playing_index'] = (st.session_state['playing_index'] + 1) % len(video_paths)
 
-# Display each video if it exists
-for video_path in video_paths:
-    if os.path.exists(video_path):
-        if st.button(f"Play {video_path}"):
-            play_video(video_path)
+# Button to play the next video
+if st.button("下一个视频"):
+    play_next_video()
 
-# Display the currently playing video
-if st.session_state['playing_video']:
-    video_file = open(st.session_state['playing_video'], 'rb')
+# Display the current video
+current_video = video_paths[st.session_state['playing_index']]
+if os.path.exists(current_video):
+    video_file = open(current_video, 'rb')
     video_bytes = video_file.read()
     st.video(video_bytes)
 
