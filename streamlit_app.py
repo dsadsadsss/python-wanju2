@@ -55,7 +55,7 @@ for video_path in video_paths:
 # Define the URL of the website you want to proxy
 url = "https://douyin.boo/index.html"
 
-# 去掉前面#，显示网页抖音美女
+# 去掉下面一句前面#，可以显示网页版抖音美女
 #st.components.v1.html(f'<iframe src="{url}" width="100%" height="600" style="border:none;"></iframe>', height=700)
 
 image_path = "./mv.jpg"
