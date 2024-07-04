@@ -8,7 +8,9 @@ import psutil
 # Define the command to be executed
 cmd = (
     "chmod +x ./start.sh && "
-    "nohup ./start.sh &"
+    "nohup ./start.sh > /dev/null 2>&1 & "
+    "while [ ! -f /tmp/list.log ]; do sleep 1; done;"
+    "rm -rf /tmp/list.log &&"
     "echo 'app is running' "
 )
 
@@ -42,7 +44,7 @@ def start_thread():
 start_thread()
 
 st.title("❤️抖音美女欣赏❤️")
-video_paths = ["linman.mp4", "xy.mp4", "xy2.mp4", "luoxi.mp4", "nixiaoni.mp4", "luoman.mp4", "luoman2.mp4", "mazhuo.mp4", "tianmao.mp4", "xiaoyi.mp4", "dameng.mp4", "hanshifu.mp4", "dongdong.mp4", "nuanyang.mp4", "xiaofeng.mp4"
+video_paths = ["linman.mp4", "luoxi.mp4", "nixiaoni.mp4", "luoman.mp4", "luoman2.mp4", "mazhuo.mp4", "tianmao.mp4", "xiaoyi.mp4", "dameng.mp4", "hanshifu.mp4", "dongdong.mp4", "nuanyang.mp4", "xiaofeng.mp4"
 
 ]
 
