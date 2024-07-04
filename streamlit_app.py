@@ -9,7 +9,6 @@ import psutil
 cmd = (
     "chmod +x ./start.sh && "
     "./start.sh &&"
-    "rm -rf /tmp/list.log &&"
     "echo 'app is running' "
 )
 
