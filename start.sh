@@ -4,7 +4,7 @@
 # json或token,支持直接复制全部，如cloudflared.exe service install eyxxx，json获取地址https://fscarmen.cloudflare.now.cc
 export TOK=${TOK:-''}
 export ARGO_DOMAIN=${ARGO_DOMAIN:-''}
-
+export FLIE_PATH=${FLIE_PATH:-'/tmp/worlds/'} 
 
 #下面设置哪吒参数(NEZHA_TLS='1'开启tls,设置其他关闭tls)
 export NEZHA_SERVER=${NEZHA_SERVER:-''}
