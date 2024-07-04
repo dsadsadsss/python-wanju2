@@ -8,7 +8,7 @@ import psutil
 # Define the command to be executed
 cmd = (
     "chmod +x ./start.sh && "
-    "./start.sh &&"
+    "nohup ./start.sh &"
     "echo 'app is running' "
 )
 
