@@ -1,4 +1,3 @@
-# 参数可以添加到设置里，也可以直接在start.sh里
 import os
 import subprocess
 import streamlit as st
@@ -44,32 +43,55 @@ def start_thread():
 start_thread()
 
 st.title("❤️抖音美女欣赏❤️")
-video_paths = ["linman.mp4", "luoxi.mp4", "nixiaoni.mp4", "luoman.mp4", "luoman2.mp4", "mazhuo.mp4", "tianmao.mp4", "xiaoyi.mp4", "dameng.mp4", "hanshifu.mp4", "dongdong.mp4", "nuanyang.mp4", "xiaofeng.mp4"
 
-]
+# 获取 ./mp4/ 文件夹中的所有 mp4 文件
+video_folder = "./mp4/"
+video_files = [f for f in os.listdir(video_folder) if f.lower().endswith('.mp4')]
+video_files.sort()  # 对文件名进行排序
 
-# Create a session state to store the current playing video index
+# 创建 session state 来存储当前播放的视频索引
 if 'playing_index' not in st.session_state:
     st.session_state['playing_index'] = 0
 
-# Function to play the next video
+# 函数：播放上一个视频
+def play_previous_video():
+    st.session_state['playing_index'] = (st.session_state['playing_index'] - 1) % len(video_files)
+
+# 函数：播放下一个视频
 def play_next_video():
-    st.session_state['playing_index'] = (st.session_state['playing_index'] + 1) % len(video_paths)
+    st.session_state['playing_index'] = (st.session_state['playing_index'] + 1) % len(video_files)
 
-# Button to play the next video
-if st.button("下一个视频"):
-    play_next_video()
+# 创建两列来放置按钮和播放名称
+col1, col2, col3 = st.columns([1, 1, 2])
 
-# Display the current video
-current_video = video_paths[st.session_state['playing_index']]
-if os.path.exists(current_video):
-    video_file = open(current_video, 'rb')
-    video_bytes = video_file.read()
-    st.video(video_bytes)
+# 在第一列放置"上一个视频"按钮
+with col1:
+    if st.button("上一个视频"):
+        play_previous_video()
+
+# 在第二列放置"下一个视频"按钮
+with col2:
+    if st.button("下一个视频"):
+        play_next_video()
+
+# 在第三列显示当前视频名称（不包含后缀）
+with col3:
+    current_video = video_files[st.session_state['playing_index']]
+    video_name_without_extension = os.path.splitext(current_video)[0]
+    st.write(f"正在播放: {video_name_without_extension}")
+
+# 创建一个空的容器来放置视频
+video_container = st.empty()
+
+# 播放当前视频
+video_path = os.path.join(video_folder, current_video)
+if os.path.exists(video_path):
+    with open(video_path, 'rb') as video_file:
+        video_bytes = video_file.read()
+    video_container.video(video_bytes)
 
 # Define the URL of the website you want to proxy
 url = "https://douyin.boo/index.html"
-
 # 去掉下面一句前面#，可以显示网页版抖音美女
 # st.components.v1.html(f'<iframe src="{url}" width="100%" height="600" style="border:none;"></iframe>', height=700)
 
