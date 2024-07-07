@@ -2,11 +2,11 @@
 
 使用方法：
 
-1，玩具鸡:修改start.sh里变量，上传start.sh,app.py,和requirements.txt三个文件即可，确保python启动文件名称为app.py，然后运行
+1，优选平台:修改start.sh里变量，上传start.sh,app.py,和requirements.txt三个文件即可，确保python启动文件名称为app.py，然后运行
 
 2，docker平台:直接引用本仓库，如render,koyeb
 
-3,python平台:引用本仓库，一般启动文件选app.py
+3, python平台:引用本仓库，一般启动文件选app.py
 
 # 免责声明:
 
