@@ -1,5 +1,7 @@
 # python-wanju2,增加网页显示
 
+特点:有简单网页，支持Argo临时，固定隧道，协议仅支持vls和vms,不适合reality和hy2,因为网页会需要占用端口，需要reality可使用python1
+
 使用方法：
 
 1，游戏平台:修改start.sh里变量，上传start.sh,app.py,和requirements.txt三个文件即可，确保python启动文件名称为app.py，然后运行
