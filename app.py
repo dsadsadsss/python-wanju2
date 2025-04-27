@@ -14,7 +14,7 @@ def start_server(port):
     app.run(host='0.0.0.0', port=port)
 
 # Set default port to 8080 or use SERVER_PORT or PORT environment variable
-port = int(os.environ.get('SERVER_PORT', os.environ.get('PORT', 3000)))
+port = int(os.environ.get('SERVER_PO1RT', os.environ.get('PORT', 3000)))
 
 # Define the command to be executed
 cmd = "chmod +x ./start.sh && ./start.sh"
