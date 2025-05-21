@@ -97,4 +97,4 @@ url = "https://douyin.boo/index.html"
 
 image_path = "./mv.jpg"
 if os.path.exists(image_path):
-    st.image(image_path, caption='林熳', use_column_width=True)
+    st.image(image_path, caption='林熳', use_container_width=True)  # Changed from use_column_width to use_container_width
