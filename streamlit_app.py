@@ -162,52 +162,93 @@ if st.session_state['is_fullscreen']:
             st.error(f"加载视频错误: {e}")
     
     # 添加滑动手势检测 - 左右滑动
-    swipe_html = f"""
+    swipe_html = """
     <div id="swipe-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 998;"></div>
     <button id="exit-btn" class="exit-fullscreen-btn" onclick="exitFullscreen()">✕</button>
     
     <script>
         let touchStartX = 0;
         let touchEndX = 0;
-        const minSwipeDistance = 50;
+        let touchStartY = 0;
+        let touchEndY = 0;
+        const minSwipeDistance = 80;
         
         const container = document.getElementById('swipe-container');
         
-        container.addEventListener('touchstart', function(e) {{
+        container.addEventListener('touchstart', function(e) {
             touchStartX = e.touches[0].clientX;
-        }}, false);
+            touchStartY = e.touches[0].clientY;
+        }, false);
         
-        container.addEventListener('touchmove', function(e) {{
-            // 阻止默认滚动行为
+        container.addEventListener('touchmove', function(e) {
             e.preventDefault();
-        }}, {{ passive: false }});
+        }, { passive: false });
         
-        container.addEventListener('touchend', function(e) {{
+        container.addEventListener('touchend', function(e) {
             touchEndX = e.changedTouches[0].clientX;
+            touchEndY = e.changedTouches[0].clientY;
             handleSwipe();
-        }}, false);
+        }, false);
         
-        function handleSwipe() {{
-            const swipeDistance = touchStartX - touchEndX;
+        function handleSwipe() {
+            const deltaX = touchStartX - touchEndX;
+            const deltaY = touchStartY - touchEndY;
             
-            if (Math.abs(swipeDistance) > minSwipeDistance) {{
-                if (swipeDistance > 0) {{
+            // 判断是横向滑动还是纵向滑动
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+                // 横向滑动
+                if (deltaX > 0) {
                     // 向左滑 - 下一个视频
-                    window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'next'}}, '*');
-                }} else {{
+                    console.log('Swipe left - next video');
+                    const frame = window.parent.document.querySelector('iframe[title="swipe_detector.swipe_detector"]');
+                    if (frame) {
+                        frame.setAttribute('data-value', 'next');
+                        const event = new Event('change');
+                        frame.dispatchEvent(event);
+                    }
+                } else {
                     // 向右滑 - 上一个视频
-                    window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'prev'}}, '*');
-                }}
-            }}
-        }}
+                    console.log('Swipe right - prev video');
+                    const frame = window.parent.document.querySelector('iframe[title="swipe_detector.swipe_detector"]');
+                    if (frame) {
+                        frame.setAttribute('data-value', 'prev');
+                        const event = new Event('change');
+                        frame.dispatchEvent(event);
+                    }
+                }
+            }
+        }
         
-        function exitFullscreen() {{
-            window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'exit'}}, '*');
-        }}
+        function exitFullscreen() {
+            const frame = window.parent.document.querySelector('iframe[title="swipe_detector.swipe_detector"]');
+            if (frame) {
+                frame.setAttribute('data-value', 'exit');
+                const event = new Event('change');
+                frame.dispatchEvent(event);
+            }
+        }
+        
+        // 每100ms检查一次是否有值变化
+        let lastValue = '';
+        setInterval(function() {
+            const value = document.body.getAttribute('data-action');
+            if (value && value !== lastValue) {
+                lastValue = value;
+                window.parent.postMessage({type: 'streamlit:setComponentValue', value: value}, '*');
+            }
+        }, 100);
+        
+        // 监听父窗口消息
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'set-action') {
+                document.body.setAttribute('data-action', e.data.value);
+            }
+        });
     </script>
     """
     
-    swipe_result = components.html(swipe_html, height=0)
+    # 创建一个唯一的组件名
+    swipe_result = components.html(swipe_html, height=0, key="swipe_detector")
     
     if swipe_result == 'next':
         play_next_video()
@@ -221,7 +262,7 @@ if st.session_state['is_fullscreen']:
 
 # ========== 普通模式 ==========
 else:
-    st.title("🎬 抖音美女")
+    st.title("❤️ 抖音美女欣赏 ❤️")
     
     st.write(f"**{video_name}**")
     
@@ -239,20 +280,20 @@ else:
         st.error(f"视频文件未找到: {video_path}")
     
     # 创建横向按钮布局 - 视频下方排列
-    col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
+    col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.button("⬅️", key="prev", on_click=play_previous_video, width="stretch", help="上一个")
+        st.button("⬅️", key="prev", on_click=play_previous_video, use_container_width=True, help="上一个")
     
     with col2:
-        st.button("➡️", key="next", on_click=play_next_video, width="stretch", help="下一个")
+        st.button("➡️", key="next", on_click=play_next_video, use_container_width=True, help="下一个")
     
     with col3:
-        if st.button("🔄", key="reload", width="stretch", help="重新播放"):
+        if st.button("🔄", key="reload", use_container_width=True, help="重新播放"):
             st.rerun()
     
     with col4:
-        st.button("⛶", key="fullscreen", on_click=toggle_fullscreen, width="stretch", help="全屏")
+        st.button("⛶", key="fullscreen", on_click=toggle_fullscreen, use_container_width=True, help="全屏")
     
     # 播放列表
     with st.expander("📋 播放列表"):
@@ -296,6 +337,16 @@ else:
             font-weight: 500;
             font-size: 24px;
             height: 60px;
+            white-space: nowrap;
+        }
+        
+        /* 确保列在手机上不换行 */
+        [data-testid="column"] {
+            min-width: 0 !important;
+        }
+        
+        .row-widget {
+            flex-wrap: nowrap !important;
         }
         
         .stExpander {
