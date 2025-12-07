@@ -219,20 +219,7 @@ else:
     
     st.write(f"**{video_name}**")
     
-    # Display current video
-    if os.path.exists(video_path):
-        try:
-            video_bytes = get_video_bytes(current_index)
-            if video_bytes:
-                st.video(video_bytes, autoplay=True)
-            else:
-                st.error("视频加载失败")
-        except Exception as e:
-            st.error(f"加载视频错误: {e}")
-    else:
-        st.error(f"视频文件未找到: {video_path}")
-    
-    # 创建横向按钮布局 - 视频下方排列
+    # 创建横向按钮布局 - 视频上方排列
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
@@ -247,6 +234,19 @@ else:
     
     with col4:
         st.button("⛶", key="fullscreen", on_click=toggle_fullscreen, use_container_width=True, help="全屏")
+    
+    # Display current video
+    if os.path.exists(video_path):
+        try:
+            video_bytes = get_video_bytes(current_index)
+            if video_bytes:
+                st.video(video_bytes, autoplay=True)
+            else:
+                st.error("视频加载失败")
+        except Exception as e:
+            st.error(f"加载视频错误: {e}")
+    else:
+        st.error(f"视频文件未找到: {video_path}")
     
     # 播放列表
     with st.expander("📋 播放列表"):
