@@ -161,20 +161,20 @@ if st.session_state['is_fullscreen']:
         except Exception as e:
             st.error(f"加载视频错误: {e}")
     
-    # 添加滑动手势检测
+    # 添加滑动手势检测 - 左右滑动
     swipe_html = f"""
     <div id="swipe-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 998;"></div>
     <button id="exit-btn" class="exit-fullscreen-btn" onclick="exitFullscreen()">✕</button>
     
     <script>
-        let touchStartY = 0;
-        let touchEndY = 0;
+        let touchStartX = 0;
+        let touchEndX = 0;
         const minSwipeDistance = 50;
         
         const container = document.getElementById('swipe-container');
         
         container.addEventListener('touchstart', function(e) {{
-            touchStartY = e.touches[0].clientY;
+            touchStartX = e.touches[0].clientX;
         }}, false);
         
         container.addEventListener('touchmove', function(e) {{
@@ -183,19 +183,19 @@ if st.session_state['is_fullscreen']:
         }}, {{ passive: false }});
         
         container.addEventListener('touchend', function(e) {{
-            touchEndY = e.changedTouches[0].clientY;
+            touchEndX = e.changedTouches[0].clientX;
             handleSwipe();
         }}, false);
         
         function handleSwipe() {{
-            const swipeDistance = touchStartY - touchEndY;
+            const swipeDistance = touchStartX - touchEndX;
             
             if (Math.abs(swipeDistance) > minSwipeDistance) {{
                 if (swipeDistance > 0) {{
-                    // 向上滑 - 下一个视频
+                    // 向左滑 - 下一个视频
                     window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'next'}}, '*');
                 }} else {{
-                    // 向下滑 - 上一个视频
+                    // 向右滑 - 上一个视频
                     window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'prev'}}, '*');
                 }}
             }}
@@ -221,11 +221,24 @@ if st.session_state['is_fullscreen']:
 
 # ========== 普通模式 ==========
 else:
-    st.title("🎬 视频播放器")
+    st.title("🎬 抖音美女")
     
     st.write(f"**{video_name}**")
     
-    # 创建横向按钮布局 - 左右排列
+    # Display current video
+    if os.path.exists(video_path):
+        try:
+            video_bytes = get_video_bytes(current_index)
+            if video_bytes:
+                st.video(video_bytes)
+            else:
+                st.error("视频加载失败")
+        except Exception as e:
+            st.error(f"加载视频错误: {e}")
+    else:
+        st.error(f"视频文件未找到: {video_path}")
+    
+    # 创建横向按钮布局 - 视频下方排列
     col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
     
     with col1:
@@ -240,19 +253,6 @@ else:
     
     with col4:
         st.button("⛶", key="fullscreen", on_click=toggle_fullscreen, width="stretch", help="全屏")
-    
-    # Display current video
-    if os.path.exists(video_path):
-        try:
-            video_bytes = get_video_bytes(current_index)
-            if video_bytes:
-                st.video(video_bytes)
-            else:
-                st.error("视频加载失败")
-        except Exception as e:
-            st.error(f"加载视频错误: {e}")
-    else:
-        st.error(f"视频文件未找到: {video_path}")
     
     # 播放列表
     with st.expander("📋 播放列表"):
