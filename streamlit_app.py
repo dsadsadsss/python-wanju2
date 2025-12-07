@@ -5,8 +5,8 @@ import streamlit.components.v1 as components
 st.set_page_config(page_title="Video Player", page_icon="🎬", layout="wide")
 
 # 初始化全屏状态
-if 'fullscreen' not in st.session_state:
-    st.session_state['fullscreen'] = False
+if 'is_fullscreen' not in st.session_state:
+    st.session_state['is_fullscreen'] = False
 
 # Get all mp4 files from ./mp4/ folder
 video_folder = "./mp4/"
@@ -64,7 +64,7 @@ def play_next_video():
     preload_adjacent_videos()
 
 def toggle_fullscreen():
-    st.session_state['fullscreen'] = not st.session_state['fullscreen']
+    st.session_state['is_fullscreen'] = not st.session_state['is_fullscreen']
 
 def preload_adjacent_videos():
     current_index = st.session_state['playing_index']
@@ -86,7 +86,7 @@ video_name = os.path.splitext(current_video)[0]
 video_path = os.path.join(video_folder, current_video)
 
 # ========== 全屏模式 ==========
-if st.session_state['fullscreen']:
+if st.session_state['is_fullscreen']:
     # 全屏模式CSS
     st.markdown("""
     <style>
