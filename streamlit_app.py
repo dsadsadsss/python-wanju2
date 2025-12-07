@@ -216,13 +216,13 @@ else:
     st.write(f"**{video_name}**")
     
     # 创建横向按钮布局 - 只保留上下切换
-    col1, col2, col3 = st.columns([1, 1, 1])
+    col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.button("⬆️ 上一个", key="prev", on_click=play_previous_video, use_container_width=True)
+        st.button("⬆️ 上个", key="prev", on_click=play_previous_video, use_container_width=True)
     
     with col2:
-        st.button("⬇️ 下一个", key="next", on_click=play_next_video, use_container_width=True)
+        st.button("⬇️ 下个", key="next", on_click=play_next_video, use_container_width=True)
     
     with col3:
         st.button("⛶ 全屏", key="fullscreen", on_click=toggle_fullscreen, use_container_width=True)
@@ -280,36 +280,55 @@ else:
         
         .stButton button {
             font-weight: 500;
-            font-size: 18px;
-            height: 50px;
+            font-size: 16px;
+            height: 45px;
             white-space: nowrap;
-            padding: 0 8px !important;
+            padding: 0 5px !important;
+            min-width: 0 !important;
         }
         
         /* 强制确保列在手机上不换行 */
         [data-testid="column"] {
             min-width: 0 !important;
             flex: 1 1 0 !important;
+            padding: 0 0.25rem !important;
         }
         
         [data-testid="stHorizontalBlock"] {
-            gap: 0.5rem !important;
+            gap: 0 !important;
         }
         
         .row-widget.stHorizontalBlock {
             flex-wrap: nowrap !important;
         }
         
+        .stButton {
+            width: 100%;
+        }
+        
         /* 手机端优化 */
         @media (max-width: 768px) {
             .stButton button {
-                font-size: 16px;
-                height: 45px;
-                padding: 0 4px !important;
+                font-size: 14px;
+                height: 40px;
+                padding: 0 3px !important;
             }
             
-            [data-testid="stHorizontalBlock"] {
-                gap: 0.3rem !important;
+            [data-testid="column"] {
+                padding: 0 0.15rem !important;
+            }
+        }
+        
+        /* 超小屏幕优化 */
+        @media (max-width: 400px) {
+            .stButton button {
+                font-size: 13px;
+                height: 38px;
+                padding: 0 2px !important;
+            }
+            
+            [data-testid="column"] {
+                padding: 0 0.1rem !important;
             }
         }
         
