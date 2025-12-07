@@ -180,7 +180,7 @@ if st.session_state['is_fullscreen']:
         try:
             video_bytes = get_video_bytes(current_index)
             if video_bytes:
-                st.video(video_bytes)
+                st.video(video_bytes, autoplay=True)
         except Exception as e:
             st.error(f"加载视频错误: {e}")
     
@@ -224,7 +224,7 @@ else:
         try:
             video_bytes = get_video_bytes(current_index)
             if video_bytes:
-                st.video(video_bytes)
+                st.video(video_bytes, autoplay=True)
             else:
                 st.error("视频加载失败")
         except Exception as e:
