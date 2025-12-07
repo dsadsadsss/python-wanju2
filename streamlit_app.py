@@ -144,12 +144,12 @@ if st.session_state['is_fullscreen']:
             background: rgba(255, 255, 255, 0.95) !important;
             border: none !important;
             border-radius: 50% !important;
-            width: 55px !important;
-            height: 55px !important;
-            font-size: 22px !important;
+            width: 50px !important;
+            height: 50px !important;
+            font-size: 20px !important;
             box-shadow: 0 3px 10px rgba(0,0,0,0.4) !important;
             padding: 0 !important;
-            min-height: 55px !important;
+            min-height: 50px !important;
             color: #333 !important;
         }
         
@@ -192,23 +192,19 @@ if st.session_state['is_fullscreen']:
     """, unsafe_allow_html=True)
     
     # 使用列布局创建按钮
-    col_spacer1, col_btn1, col_btn2, col_btn3, col_btn4, col_spacer2 = st.columns([2, 1, 1, 1, 1, 2])
+    col_spacer1, col_btn1, col_btn2, col_btn3, col_spacer2 = st.columns([1, 1, 1, 1, 1])
     
     with col_btn1:
-        if st.button("⬅️", key="fs_prev", use_container_width=True):
+        if st.button("⬆️", key="fs_prev", use_container_width=True):
             play_previous_video()
             st.rerun()
     
     with col_btn2:
-        if st.button("➡️", key="fs_next", use_container_width=True):
+        if st.button("⬇️", key="fs_next", use_container_width=True):
             play_next_video()
             st.rerun()
     
     with col_btn3:
-        if st.button("🔄", key="fs_reload", use_container_width=True):
-            st.rerun()
-    
-    with col_btn4:
         if st.button("❌", key="fs_exit", use_container_width=True):
             toggle_fullscreen()
             st.rerun()
@@ -219,21 +215,17 @@ else:
     
     st.write(f"**{video_name}**")
     
-    # 创建横向按钮布局 - 视频上方排列
-    col1, col2, col3, col4 = st.columns(4)
+    # 创建横向按钮布局 - 只保留上下切换
+    col1, col2, col3 = st.columns([1, 1, 1])
     
     with col1:
-        st.button("⬅️", key="prev", on_click=play_previous_video, use_container_width=True, help="上一个")
+        st.button("⬆️ 上一个", key="prev", on_click=play_previous_video, use_container_width=True)
     
     with col2:
-        st.button("➡️", key="next", on_click=play_next_video, use_container_width=True, help="下一个")
+        st.button("⬇️ 下一个", key="next", on_click=play_next_video, use_container_width=True)
     
     with col3:
-        if st.button("🔄", key="reload", use_container_width=True, help="重新播放"):
-            st.rerun()
-    
-    with col4:
-        st.button("⛶", key="fullscreen", on_click=toggle_fullscreen, use_container_width=True, help="全屏")
+        st.button("⛶ 全屏", key="fullscreen", on_click=toggle_fullscreen, use_container_width=True)
     
     # Display current video
     if os.path.exists(video_path):
@@ -288,18 +280,37 @@ else:
         
         .stButton button {
             font-weight: 500;
-            font-size: 24px;
-            height: 60px;
+            font-size: 18px;
+            height: 50px;
             white-space: nowrap;
+            padding: 0 8px !important;
         }
         
-        /* 确保列在手机上不换行 */
+        /* 强制确保列在手机上不换行 */
         [data-testid="column"] {
             min-width: 0 !important;
+            flex: 1 1 0 !important;
         }
         
-        .row-widget {
+        [data-testid="stHorizontalBlock"] {
+            gap: 0.5rem !important;
+        }
+        
+        .row-widget.stHorizontalBlock {
             flex-wrap: nowrap !important;
+        }
+        
+        /* 手机端优化 */
+        @media (max-width: 768px) {
+            .stButton button {
+                font-size: 16px;
+                height: 45px;
+                padding: 0 4px !important;
+            }
+            
+            [data-testid="stHorizontalBlock"] {
+                gap: 0.3rem !important;
+            }
         }
         
         .stExpander {
