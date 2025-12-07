@@ -1,6 +1,5 @@
 import os
 import streamlit as st
-import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Video Player", page_icon="🎬", layout="wide")
 
@@ -107,16 +106,12 @@ if st.session_state['is_fullscreen']:
             width: 100vw !important;
             height: 100vh !important;
             border-radius: 0px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1;
         }
         
         /* 视频信息覆盖层 */
         .video-info-overlay {
             position: fixed;
-            bottom: 80px;
+            bottom: 100px;
             left: 20px;
             background: rgba(0, 0, 0, 0.6);
             color: white;
@@ -127,11 +122,21 @@ if st.session_state['is_fullscreen']:
             font-weight: bold;
         }
         
-        /* 退出按钮 */
-        .exit-fullscreen-btn {
+        /* 控制按钮容器 */
+        .fullscreen-controls {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            z-index: 999;
+            padding: 0 20px;
+        }
+        
+        .control-btn {
             background: rgba(255, 255, 255, 0.9);
             border: none;
             border-radius: 50%;
@@ -139,8 +144,37 @@ if st.session_state['is_fullscreen']:
             height: 50px;
             font-size: 20px;
             cursor: pointer;
-            z-index: 999;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .exit-btn {
+            background: rgba(255, 100, 100, 0.9);
+        }
+        
+        /* 隐藏Streamlit按钮样式 */
+        .stButton {
+            position: fixed;
+            z-index: 1000;
+        }
+        
+        .stButton button {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border: none !important;
+            border-radius: 50% !important;
+            width: 50px !important;
+            height: 50px !important;
+            font-size: 20px !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+            padding: 0 !important;
+            min-height: 50px !important;
+        }
+        
+        .stButton button:hover {
+            background: rgba(255, 255, 255, 1) !important;
+            transform: scale(1.1);
         }
     </style>
     """, unsafe_allow_html=True)
@@ -161,104 +195,35 @@ if st.session_state['is_fullscreen']:
         except Exception as e:
             st.error(f"加载视频错误: {e}")
     
-    # 添加滑动手势检测 - 左右滑动
-    swipe_html = """
-    <div id="swipe-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 998;"></div>
-    <button id="exit-btn" class="exit-fullscreen-btn" onclick="exitFullscreen()">✕</button>
+    # 创建悬浮控制按钮
+    cols = st.columns([1, 1, 1, 1, 1])
     
-    <script>
-        let touchStartX = 0;
-        let touchEndX = 0;
-        let touchStartY = 0;
-        let touchEndY = 0;
-        const minSwipeDistance = 80;
-        
-        const container = document.getElementById('swipe-container');
-        
-        container.addEventListener('touchstart', function(e) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-        }, false);
-        
-        container.addEventListener('touchmove', function(e) {
-            e.preventDefault();
-        }, { passive: false });
-        
-        container.addEventListener('touchend', function(e) {
-            touchEndX = e.changedTouches[0].clientX;
-            touchEndY = e.changedTouches[0].clientY;
-            handleSwipe();
-        }, false);
-        
-        function handleSwipe() {
-            const deltaX = touchStartX - touchEndX;
-            const deltaY = touchStartY - touchEndY;
-            
-            // 判断是横向滑动还是纵向滑动
-            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
-                // 横向滑动
-                if (deltaX > 0) {
-                    // 向左滑 - 下一个视频
-                    console.log('Swipe left - next video');
-                    const frame = window.parent.document.querySelector('iframe[title="swipe_detector.swipe_detector"]');
-                    if (frame) {
-                        frame.setAttribute('data-value', 'next');
-                        const event = new Event('change');
-                        frame.dispatchEvent(event);
-                    }
-                } else {
-                    // 向右滑 - 上一个视频
-                    console.log('Swipe right - prev video');
-                    const frame = window.parent.document.querySelector('iframe[title="swipe_detector.swipe_detector"]');
-                    if (frame) {
-                        frame.setAttribute('data-value', 'prev');
-                        const event = new Event('change');
-                        frame.dispatchEvent(event);
-                    }
-                }
-            }
-        }
-        
-        function exitFullscreen() {
-            const frame = window.parent.document.querySelector('iframe[title="swipe_detector.swipe_detector"]');
-            if (frame) {
-                frame.setAttribute('data-value', 'exit');
-                const event = new Event('change');
-                frame.dispatchEvent(event);
-            }
-        }
-        
-        // 每100ms检查一次是否有值变化
-        let lastValue = '';
-        setInterval(function() {
-            const value = document.body.getAttribute('data-action');
-            if (value && value !== lastValue) {
-                lastValue = value;
-                window.parent.postMessage({type: 'streamlit:setComponentValue', value: value}, '*');
-            }
-        }, 100);
-        
-        // 监听父窗口消息
-        window.addEventListener('message', function(e) {
-            if (e.data && e.data.type === 'set-action') {
-                document.body.setAttribute('data-action', e.data.value);
-            }
-        });
-    </script>
-    """
+    with cols[0]:
+        st.markdown('<style>.stButton:nth-of-type(1) {bottom: 20px; left: 20px;}</style>', unsafe_allow_html=True)
+        if st.button("⬅️", key="fs_prev"):
+            play_previous_video()
+            st.rerun()
     
-    # 创建一个唯一的组件名
-    swipe_result = components.html(swipe_html, height=0, key="swipe_detector")
+    with cols[1]:
+        st.markdown('<style>.stButton:nth-of-type(2) {bottom: 20px; left: 90px;}</style>', unsafe_allow_html=True)
+        if st.button("➡️", key="fs_next"):
+            play_next_video()
+            st.rerun()
     
-    if swipe_result == 'next':
-        play_next_video()
-        st.rerun()
-    elif swipe_result == 'prev':
-        play_previous_video()
-        st.rerun()
-    elif swipe_result == 'exit':
-        toggle_fullscreen()
-        st.rerun()
+    with cols[2]:
+        st.markdown('<style>.stButton:nth-of-type(3) {bottom: 20px; left: calc(50% - 25px);}</style>', unsafe_allow_html=True)
+        if st.button("🔄", key="fs_reload"):
+            st.rerun()
+    
+    with cols[3]:
+        st.markdown('<style>.stButton:nth-of-type(4) {bottom: 20px; right: 90px;}</style>', unsafe_allow_html=True)
+        if st.button("❌", key="fs_exit"):
+            toggle_fullscreen()
+            st.rerun()
+    
+    with cols[4]:
+        # 隐藏的占位符
+        st.markdown('<div style="height: 0px;"></div>', unsafe_allow_html=True)
 
 # ========== 普通模式 ==========
 else:
@@ -323,7 +288,7 @@ else:
     image_path = "./mv.jpg"
     if os.path.exists(image_path):
         st.divider()
-        st.image(image_path, width="stretch")
+        st.image(image_path, use_container_width=True)
     
     # 普通模式CSS
     st.markdown("""
