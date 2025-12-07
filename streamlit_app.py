@@ -131,50 +131,39 @@ if st.session_state['is_fullscreen']:
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
             z-index: 999;
-            padding: 0 20px;
+            pointer-events: none;
         }
         
-        .control-btn {
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 20px;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .exit-btn {
-            background: rgba(255, 100, 100, 0.9);
-        }
-        
-        /* 隐藏Streamlit按钮样式 */
+        /* 按钮样式 */
         .stButton {
-            position: fixed;
-            z-index: 1000;
+            pointer-events: auto;
         }
         
         .stButton button {
-            background: rgba(255, 255, 255, 0.9) !important;
+            background: rgba(255, 255, 255, 0.95) !important;
             border: none !important;
             border-radius: 50% !important;
-            width: 50px !important;
-            height: 50px !important;
-            font-size: 20px !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+            width: 55px !important;
+            height: 55px !important;
+            font-size: 22px !important;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.4) !important;
             padding: 0 !important;
-            min-height: 50px !important;
+            min-height: 55px !important;
+            color: #333 !important;
         }
         
         .stButton button:hover {
             background: rgba(255, 255, 255, 1) !important;
-            transform: scale(1.1);
+            transform: scale(1.15);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
+        }
+        
+        /* 列布局优化 */
+        [data-testid="column"] {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -195,35 +184,34 @@ if st.session_state['is_fullscreen']:
         except Exception as e:
             st.error(f"加载视频错误: {e}")
     
-    # 创建悬浮控制按钮
-    cols = st.columns([1, 1, 1, 1, 1])
+    # 创建悬浮控制按钮 - 底部居中横向排列
+    st.markdown("""
+    <div class="fullscreen-controls">
+        <div id="btn-container" style="display: flex; gap: 15px; align-items: center;"></div>
+    </div>
+    """, unsafe_allow_html=True)
     
-    with cols[0]:
-        st.markdown('<style>.stButton:nth-of-type(1) {bottom: 20px; left: 20px;}</style>', unsafe_allow_html=True)
-        if st.button("⬅️", key="fs_prev"):
+    # 使用列布局创建按钮
+    col_spacer1, col_btn1, col_btn2, col_btn3, col_btn4, col_spacer2 = st.columns([2, 1, 1, 1, 1, 2])
+    
+    with col_btn1:
+        if st.button("⬅️", key="fs_prev", use_container_width=True):
             play_previous_video()
             st.rerun()
     
-    with cols[1]:
-        st.markdown('<style>.stButton:nth-of-type(2) {bottom: 20px; left: 90px;}</style>', unsafe_allow_html=True)
-        if st.button("➡️", key="fs_next"):
+    with col_btn2:
+        if st.button("➡️", key="fs_next", use_container_width=True):
             play_next_video()
             st.rerun()
     
-    with cols[2]:
-        st.markdown('<style>.stButton:nth-of-type(3) {bottom: 20px; left: calc(50% - 25px);}</style>', unsafe_allow_html=True)
-        if st.button("🔄", key="fs_reload"):
+    with col_btn3:
+        if st.button("🔄", key="fs_reload", use_container_width=True):
             st.rerun()
     
-    with cols[3]:
-        st.markdown('<style>.stButton:nth-of-type(4) {bottom: 20px; right: 90px;}</style>', unsafe_allow_html=True)
-        if st.button("❌", key="fs_exit"):
+    with col_btn4:
+        if st.button("❌", key="fs_exit", use_container_width=True):
             toggle_fullscreen()
             st.rerun()
-    
-    with cols[4]:
-        # 隐藏的占位符
-        st.markdown('<div style="height: 0px;"></div>', unsafe_allow_html=True)
 
 # ========== 普通模式 ==========
 else:
