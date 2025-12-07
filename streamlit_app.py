@@ -229,23 +229,17 @@ else:
     col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
     
     with col1:
-        if st.button("⬅️", key="prev", width="stretch", help="上一个"):
-            play_previous_video()
-            st.rerun()
+        st.button("⬅️", key="prev", on_click=play_previous_video, width="stretch", help="上一个")
     
     with col2:
-        if st.button("➡️", key="next", width="stretch", help="下一个"):
-            play_next_video()
-            st.rerun()
+        st.button("➡️", key="next", on_click=play_next_video, width="stretch", help="下一个")
     
     with col3:
         if st.button("🔄", key="reload", width="stretch", help="重新播放"):
             st.rerun()
     
     with col4:
-        if st.button("⛶", key="fullscreen", width="stretch", help="全屏"):
-            toggle_fullscreen()
-            st.rerun()
+        st.button("⛶", key="fullscreen", on_click=toggle_fullscreen, width="stretch", help="全屏")
     
     # Display current video
     if os.path.exists(video_path):
